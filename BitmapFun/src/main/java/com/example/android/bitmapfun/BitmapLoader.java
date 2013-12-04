@@ -35,7 +35,7 @@ public class BitmapLoader {
     private static BitmapLoader imageLoader = null;
 
     public static BitmapLoader getInstance() throws Throwable {
-        if(mJsonObject == null || mFragmentActivity == null || mRootImageLink == null){
+        if(mFragmentActivity == null || mRootImageLink == null){
             throw new Throwable("before method executing please call init(String linkToJSon, FragmentActivity fragmentActivity, String rootImageLink)");
         }
         if(imageLoader == null){
@@ -52,29 +52,32 @@ public class BitmapLoader {
 
     private BitmapLoader(JSONObject jSonObject, FragmentActivity fragmentActivity){
         mContext = fragmentActivity.getApplicationContext();
+
         try {
-            JSONArray jsonArray = jSonObject.names();
-            String name = "";
-            RemoteObject remoteObject;
-            long id;
-            SampleApplication.getInstance(mContext).getDateBase().openDB();
-            String value = null;
-            for(int currentIndex = 0; currentIndex < jsonArray.length(); currentIndex ++){
-                name = jsonArray.getString(currentIndex);
-                value = jSonObject.getString(name).endsWith(".png") ? mRootImageLink + jSonObject.getString(name) : jSonObject.getString(name);
+            if(jSonObject != null){
+                JSONArray jsonArray = jSonObject.names();
+                String name = "";
+                RemoteObject remoteObject;
+                long id;
+                SampleApplication.getInstance(mContext).getDateBase().openDB();
+                String value = null;
+                for(int currentIndex = 0; currentIndex < jsonArray.length(); currentIndex ++){
+                    name = jsonArray.getString(currentIndex);
+                    value = jSonObject.getString(name).endsWith(".png") ? mRootImageLink + jSonObject.getString(name) : jSonObject.getString(name);
 
-                Log.i("##TAG", "Value: " + value);
-                remoteObject = new RemoteObject(name, value);
+                    Log.i("##TAG", "Value: " + value);
+                    remoteObject = new RemoteObject(name, value);
 
-                id = SampleApplication.getInstance(mContext).getDateBase().getRemoteObjectId(remoteObject);
-                if(id == -1){
-                    SampleApplication.getInstance(mContext).getDateBase().insert(remoteObject);
-                } else {
-                    SampleApplication.getInstance(mContext).getDateBase().update(remoteObject, id);
+                    id = SampleApplication.getInstance(mContext).getDateBase().getRemoteObjectId(remoteObject);
+                    if(id == -1){
+                        SampleApplication.getInstance(mContext).getDateBase().insert(remoteObject);
+                    } else {
+                        SampleApplication.getInstance(mContext).getDateBase().update(remoteObject, id);
+                    }
+                    Images.imageThumbUrls.add(value);
                 }
-                Images.imageThumbUrls.add(value);
+                SampleApplication.getInstance(mContext).getDateBase().closeDB();
             }
-            SampleApplication.getInstance(mContext).getDateBase().closeDB();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,6 +114,10 @@ public class BitmapLoader {
 
     public void clearCache(){
         imageFragment.clearCache();
+    }
+
+    public void loadImage(String key, ImageView imageView){
+        imageFragment.loadImage(key, imageView);
     }
 
     public BitmapDrawable getBitmapDrawable(String key, ImageView imageView){

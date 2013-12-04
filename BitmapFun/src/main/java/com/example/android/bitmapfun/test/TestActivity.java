@@ -75,16 +75,14 @@ public class TestActivity extends FragmentActivity {
     }
 
     private void initializeImageLoader(JSONObject jsonObject){
-        Log.i("##TAG", "initializeImageLoader: Response: " + jsonObject.toString());
+        Log.i("##TAG", "initializeImageLoader: Response: " + (jsonObject != null ? jsonObject.toString() : "null"));
         BitmapLoader.init(jsonObject, TestActivity.this, "http://mobilecms.ctc.ru/Uploads/Images/");
         try {
             imageLoader = BitmapLoader.getInstance();
             imageLoader.createImageFragment(198);
             if(imageLoader != null){
                 imageLoader.resume();
-                BitmapDrawable bitmapDrawable = imageLoader.getBitmapDrawable("IOSIco152x152", imageView);
-                Log.i("##TAG", "initializeImageLoader: bitmap: " + bitmapDrawable);
-                imageView.setImageDrawable(bitmapDrawable);
+                imageLoader.loadImage("IOSIco152x152", imageView);
                 imageView1.setImageBitmap(createDrawingCache(imageView));
             }else{
                 Log.i("##TAG", "BitmapLoader is null!");
@@ -110,6 +108,8 @@ public class TestActivity extends FragmentActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.i("##TAG", "onErrorResponse: " + error.getMessage());
+                initializeImageLoader(null);
+                linearLayout.setBackgroundColor(imageLoader.getColorByKey("MenuColorTrailerBorder"));
             }
         };
     }

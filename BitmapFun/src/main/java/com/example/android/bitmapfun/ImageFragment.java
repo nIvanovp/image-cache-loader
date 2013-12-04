@@ -66,6 +66,12 @@ public class ImageFragment {
         mImageFetcher.clearCache();
     }
 
+    public void loadImage(String key, ImageView imageView){
+        String keyDataBase = SampleApplication.getInstance(mContext).getDateBase().getValueByKey(key);
+        Log.i("##TAG", "KeyDataBase:" + keyDataBase);
+        mImageFetcher.loadImage(keyDataBase, imageView);
+    }
+
     public BitmapDrawable getBitmapDrawable(String key, ImageView imageView){
 //        ImageView imageView = new RecyclingImageView(mContext);
         String keyDataBase = SampleApplication.getInstance(mContext).getDateBase().getValueByKey(key);

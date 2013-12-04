@@ -122,6 +122,7 @@ public abstract class ImageWorker {
                     new AsyncDrawable(mResources, mLoadingBitmap, task);
 
             task.executeOnExecutor(AsyncTask.DUAL_THREAD_EXECUTOR, data);
+            Log.i("##TAG", "AsyncDrawable");
             return asyncDrawable;
 
             // NOTE: This uses a custom version of AsyncTask that has been pulled from the
