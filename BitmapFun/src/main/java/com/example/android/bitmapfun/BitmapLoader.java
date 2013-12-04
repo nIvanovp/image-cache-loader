@@ -1,6 +1,7 @@
 package com.example.android.bitmapfun;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -49,46 +50,59 @@ public class BitmapLoader {
         mRootImageLink = rootImageLink;
     }
 
-      private BitmapLoader(JSONObject jSonObject, FragmentActivity fragmentActivity){
-          mContext = fragmentActivity.getApplicationContext();
-          try {
-              JSONArray jsonArray = jSonObject.names();
-              String name = "";
-              RemoteObject remoteObject;
-              long id;
-              SampleApplication.getInstance(mContext).getDateBase().openDB();
-              String value = null;
-              for(int currentIndex = 0; currentIndex < jsonArray.length(); currentIndex ++){
-                  name = jsonArray.getString(currentIndex);
-                  value = jSonObject.getString(name).endsWith(".png") ? mRootImageLink + jSonObject.getString(name) : jSonObject.getString(name);
+    private BitmapLoader(JSONObject jSonObject, FragmentActivity fragmentActivity){
+        mContext = fragmentActivity.getApplicationContext();
+        try {
+            JSONArray jsonArray = jSonObject.names();
+            String name = "";
+            RemoteObject remoteObject;
+            long id;
+            SampleApplication.getInstance(mContext).getDateBase().openDB();
+            String value = null;
+            for(int currentIndex = 0; currentIndex < jsonArray.length(); currentIndex ++){
+                name = jsonArray.getString(currentIndex);
+                value = jSonObject.getString(name).endsWith(".png") ? mRootImageLink + jSonObject.getString(name) : jSonObject.getString(name);
 
-                  Log.i("##TAG", "Value: " + value);
-                  remoteObject = new RemoteObject(name, value);
+                Log.i("##TAG", "Value: " + value);
+                remoteObject = new RemoteObject(name, value);
 
-                  id = SampleApplication.getInstance(mContext).getDateBase().getRemoteObjectId(remoteObject);
-                  if(id == -1){
-                      SampleApplication.getInstance(mContext).getDateBase().insert(remoteObject);
-                  } else {
-                      SampleApplication.getInstance(mContext).getDateBase().update(remoteObject, id);
-                  }
-                  Images.imageThumbUrls.add(value);
-              }
-              SampleApplication.getInstance(mContext).getDateBase().closeDB();
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-      }
+                id = SampleApplication.getInstance(mContext).getDateBase().getRemoteObjectId(remoteObject);
+                if(id == -1){
+                    SampleApplication.getInstance(mContext).getDateBase().insert(remoteObject);
+                } else {
+                    SampleApplication.getInstance(mContext).getDateBase().update(remoteObject, id);
+                }
+                Images.imageThumbUrls.add(value);
+            }
+            SampleApplication.getInstance(mContext).getDateBase().closeDB();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void createImageFragment(int imageSize) {
         imageFragment = new ImageFragment(mFragmentActivity, imageSize);
     }
 
     public void destroy(){
-
+        imageFragment.destroy();
     }
 
     public void pause(){
         imageFragment.pause();
+    }
+
+    public int getColorByKey(String key){
+        String keyDataBase = SampleApplication.getInstance(mContext).getDateBase().getValueByKey(key);
+        Log.i("##TAG", "KeyDataBase color:" + keyDataBase);
+
+        int color = 0;
+        try{
+            color = Color.parseColor("#" + keyDataBase);
+        }catch (Throwable ex){
+            Log.i("##TAG", "Throwable: " + ex.getMessage());
+        }
+        return color;
     }
 
     public void resume(){

@@ -1,9 +1,14 @@
 package com.example.android.bitmapfun.test;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.android.volley.Request;
@@ -28,6 +33,9 @@ public class TestActivity extends FragmentActivity {
 
     BitmapLoader imageLoader;
     ImageView imageView;
+    ImageView imageView1;
+
+    LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +43,35 @@ public class TestActivity extends FragmentActivity {
         setContentView(R.layout.test_activity);
 
         imageView = (ImageView) findViewById(R.id.imageView);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.mainLayout);
+        imageView1 = (ImageView) findViewById(R.id.imageView1);
+        linearLayout = (LinearLayout) findViewById(R.id.mainLayout);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://mobilecms.ctc.ru/Push/GetDynamicParameters?projectId=74079&lastupdate=2012-10-27%2020:43:09.223";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, successListener(), errorListener());
         queue.add(jsonObjectRequest);
+    }
+
+    private Bitmap createDrawingCache(ImageView myImageView){
+        myImageView.setDrawingCacheEnabled(true);
+
+        myImageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        myImageView.layout(0, 0, myImageView.getMeasuredWidth(), myImageView.getMeasuredHeight());
+
+        myImageView.buildDrawingCache(true);
+
+        Bitmap b = Bitmap.createBitmap(myImageView.getDrawingCache());
+//        myImageView.setDrawingCacheEnabled(false); // clear drawing cache
+        return b;
+    }
+
+    public Bitmap loadBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap( v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
+        v.draw(c);
+        return b;
     }
 
     private void initializeImageLoader(JSONObject jsonObject){
@@ -54,6 +85,7 @@ public class TestActivity extends FragmentActivity {
                 BitmapDrawable bitmapDrawable = imageLoader.getBitmapDrawable("IOSIco152x152", imageView);
                 Log.i("##TAG", "initializeImageLoader: bitmap: " + bitmapDrawable);
                 imageView.setImageDrawable(bitmapDrawable);
+                imageView1.setImageBitmap(createDrawingCache(imageView));
             }else{
                 Log.i("##TAG", "BitmapLoader is null!");
             }
@@ -68,6 +100,7 @@ public class TestActivity extends FragmentActivity {
             @Override
             public void onResponse(JSONObject response) {
                 initializeImageLoader(response);
+                linearLayout.setBackgroundColor(imageLoader.getColorByKey("MenuColorTrailerBorder"));
             }
         };
     }

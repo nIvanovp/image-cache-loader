@@ -10,6 +10,7 @@ import com.example.android.bitmapfun.application.SampleApplication;
 import com.example.android.bitmapfun.ui.RecyclingImageView;
 import com.example.android.bitmapfun.util.ImageCache;
 import com.example.android.bitmapfun.util.ImageFetcher;
+import com.example.android.bitmapfun.util.ImageWorker;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,6 +40,7 @@ public class ImageFragment {
         cacheParams.setMemCacheSizePercent(0.25f);
         mImageFetcher = new ImageFetcher(activity, mImageThumbSize);
         mImageFetcher.setLoadingImage(R.drawable.empty_photo);
+//        mImageFetcher.setImageFadeIn(false);
         mImageFetcher.addImageCache(activity.getSupportFragmentManager(), cacheParams);
 
 //        mImageFetcher.setPauseWork(false); //todo recheck this logic
