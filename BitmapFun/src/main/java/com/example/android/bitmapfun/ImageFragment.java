@@ -38,10 +38,10 @@ public class ImageFragment {
 
         cacheParams.setMemCacheSizePercent(0.25f);
         mImageFetcher = new ImageFetcher(activity, mImageThumbSize);
-//        mImageFetcher.setLoadingImage(R.drawable.empty_photo);
+        mImageFetcher.setLoadingImage(R.drawable.empty_photo);
         mImageFetcher.addImageCache(activity.getSupportFragmentManager(), cacheParams);
 
-        mImageFetcher.setPauseWork(false); //todo recheck this logic
+//        mImageFetcher.setPauseWork(false); //todo recheck this logic
     }
 
     public void destroy(){

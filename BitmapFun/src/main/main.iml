@@ -12,8 +12,8 @@
       <sourceFolder url="file://$MODULE_DIR$/java" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="module" module-name="volley" />
+    <orderEntry type="library" name="android-support-v4" level="project" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

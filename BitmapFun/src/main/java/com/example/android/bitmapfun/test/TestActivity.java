@@ -53,8 +53,7 @@ public class TestActivity extends FragmentActivity {
                 imageLoader.resume();
                 BitmapDrawable bitmapDrawable = imageLoader.getBitmapDrawable("IOSIco152x152", imageView);
                 Log.i("##TAG", "initializeImageLoader: bitmap: " + bitmapDrawable);
-
-//                imageView.setImageDrawable(bitmapDrawable);
+                imageView.setImageDrawable(bitmapDrawable);
             }else{
                 Log.i("##TAG", "BitmapLoader is null!");
             }
