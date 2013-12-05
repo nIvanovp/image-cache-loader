@@ -1,23 +1,18 @@
 package com.example.android.bitmapfun.test;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import bitmapfun.BitmapLoader;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.android.bitmapfun.BitmapLoader;
 import com.example.android.bitmapfun.R;
 import org.json.JSONObject;
 
@@ -52,28 +47,6 @@ public class TestActivity extends FragmentActivity {
         queue.add(jsonObjectRequest);
     }
 
-    private Bitmap createDrawingCache(ImageView myImageView){
-        myImageView.setDrawingCacheEnabled(true);
-
-        myImageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        myImageView.layout(0, 0, myImageView.getMeasuredWidth(), myImageView.getMeasuredHeight());
-
-        myImageView.buildDrawingCache(true);
-
-        Bitmap b = Bitmap.createBitmap(myImageView.getDrawingCache());
-//        myImageView.setDrawingCacheEnabled(false); // clear drawing cache
-        return b;
-    }
-
-    public Bitmap loadBitmapFromView(View v) {
-        Bitmap b = Bitmap.createBitmap( v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
-        v.draw(c);
-        return b;
-    }
-
     private void initializeImageLoader(JSONObject jsonObject){
         Log.i("##TAG", "initializeImageLoader: Response: " + (jsonObject != null ? jsonObject.toString() : "null"));
         BitmapLoader.init(jsonObject, TestActivity.this, "http://mobilecms.ctc.ru/Uploads/Images/");
@@ -82,14 +55,17 @@ public class TestActivity extends FragmentActivity {
             imageLoader.createImageFragment(198);
             if(imageLoader != null){
                 imageLoader.resume();
-                imageLoader.loadImage("IOSIco152x152", imageView);
-                imageView1.setImageBitmap(createDrawingCache(imageView));
+                BitmapDrawable bitmapDrawable = imageLoader.getBitmapDrawable("SocialShareButtonActive", imageView);
+                imageView.setImageDrawable(bitmapDrawable);
+                imageLoader.loadImage("MenuLogo412x166", linearLayout);
+//                imageLoader.loadImage("IOSIco152x152", linearLayout);
+//                linearLayout.setBackground(bitmapDrawable);
             }else{
                 Log.i("##TAG", "BitmapLoader is null!");
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            Log.i("##TAG", "initializeImageLoader: " + throwable.getMessage());
+            Log.i("##TAG", "initializeImageLoader1: " + throwable.getMessage());
         }
     }
 
@@ -98,7 +74,7 @@ public class TestActivity extends FragmentActivity {
             @Override
             public void onResponse(JSONObject response) {
                 initializeImageLoader(response);
-                linearLayout.setBackgroundColor(imageLoader.getColorByKey("MenuColorTrailerBorder"));
+//                linearLayout.setBackgroundColor(imageLoader.getColorByKey("MenuColorTrailerBorder"));
             }
         };
     }
@@ -109,7 +85,7 @@ public class TestActivity extends FragmentActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.i("##TAG", "onErrorResponse: " + error.getMessage());
                 initializeImageLoader(null);
-                linearLayout.setBackgroundColor(imageLoader.getColorByKey("MenuColorTrailerBorder"));
+//                linearLayout.setBackgroundColor(imageLoader.getColorByKey("MenuColorTrailerBorder"));
             }
         };
     }
